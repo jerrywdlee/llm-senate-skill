@@ -41,12 +41,20 @@ function createClient(providerCfg) {
 }
 
 export async function chat(client, { model, messages, temperature, maxTokens }) {
-  const resp = await client.chat.completions.create({
+  const payload = {
     model,
     messages,
     temperature: temperature ?? 0.4,
-    max_tokens: maxTokens ?? 8000,
-  });
+  };
+
+  // AzureOpenAI requires max_completion_tokens for some models.
+  if (client instanceof AzureOpenAI) {
+    payload.max_completion_tokens = maxTokens ?? 8000;
+  } else {
+    payload.max_tokens = maxTokens ?? 8000;
+  }
+
+  const resp = await client.chat.completions.create(payload);
   return resp.choices?.[0]?.message?.content ?? '';
 }
 

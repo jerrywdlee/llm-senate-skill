@@ -134,6 +134,10 @@ model = "gemma3:12b"
 role = "sre"
 ```
 
+> Note:
+> Azure 上に Host された Grok は `kind = "azure-direct"` ではなく
+> `kind = "openai-compat"` で設定してください。
+
 ## Documentation
 
 - [SKILL.md](SKILL.md) — Agent 向けの正式エントリポイント

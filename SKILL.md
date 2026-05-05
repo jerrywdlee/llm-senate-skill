@@ -192,6 +192,10 @@ model = "gemini-2.5-pro"
 role = "security"
 ```
 
+> Note:
+> Azure 上に Host された Grok は `kind = "azure-direct"` ではなく
+> `kind = "openai-compat"` で設定してください。
+
 `.env`（**`.gitignore` 済み**）:
 
 ```dotenv

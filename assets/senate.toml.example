@@ -30,6 +30,8 @@ early_agreement_round_threshold = 2
 
 [providers.azure]
 # kind: "azure-direct"   …… Azure OpenAI を直接叩く
+# 注意: Azure 上でホストされた Grok を使う場合は
+# kind = "azure-direct" ではなく kind = "openai-compat" を使う。
 kind        = "azure-direct"
 base_url    = "${AZURE_OPENAI_ENDPOINT}"
 api_key     = "${AZURE_OPENAI_API_KEY}"
@@ -43,6 +45,8 @@ base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
 api_key  = "${GEMINI_API_KEY}"
 
 [providers.xai]
+# 例: Azure-hosted Grok を OpenAI 互換エンドポイントで使う場合も
+# kind = "openai-compat" を指定する。
 kind     = "openai-compat"
 base_url = "https://api.x.ai/v1"
 api_key  = "${XAI_API_KEY}"

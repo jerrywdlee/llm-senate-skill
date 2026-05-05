@@ -1,7 +1,8 @@
 // config-loader.js
-// Load TOML with ${ENV_VAR} placeholder substitution (envsubst-style).
-// Reads .env from the project root, expands placeholders, then parses TOML.
-// Schema (post-refactor): named [providers.<name>] presets + [[senator]] list.
+// Load TOML, then lazily resolve ${ENV_VAR} placeholders ONLY in the parts
+// of the config that are actually used (referenced providers + [senate] /
+// [storage] / [intensity_overrides]). This makes commented-out provider
+// blocks containing ${...} placeholders harmless.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,16 +20,36 @@ export function loadEnv(envPath) {
   if (fs.existsSync(fallback)) dotenv.config({ path: fallback });
 }
 
-export function expandEnv(input) {
-  return input.replace(PLACEHOLDER_RE, (match, key) => {
-    if (!(key in process.env) || process.env[key] === '') {
+// Substitute ${VAR} in a string. Throws on missing/empty for the referenced
+// var, with a contextual hint about *where* the placeholder lives.
+function substitute(str, contextHint) {
+  return str.replace(PLACEHOLDER_RE, (_match, key) => {
+    const v = process.env[key];
+    if (v === undefined || v === '') {
       throw new Error(
-        `Config references \${${key}} but it is unset/empty in environment (.env). ` +
+        `${contextHint} references \${${key}} but it is unset/empty in environment (.env). ` +
           `Either set it, or remove the senator/provider that requires it.`,
       );
     }
-    return process.env[key];
+    return v;
   });
+}
+
+// Walk an object and substitute ${VAR} in any string leaf in-place.
+function substituteDeep(obj, contextHint) {
+  if (obj == null) return;
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      const v = obj[i];
+      if (typeof v === 'string') obj[i] = substitute(v, `${contextHint}[${i}]`);
+      else if (v && typeof v === 'object') substituteDeep(v, `${contextHint}[${i}]`);
+    }
+    return;
+  }
+  for (const [k, v] of Object.entries(obj)) {
+    if (typeof v === 'string') obj[k] = substitute(v, `${contextHint}.${k}`);
+    else if (v && typeof v === 'object') substituteDeep(v, `${contextHint}.${k}`);
+  }
 }
 
 export function loadConfig(tomlPath, envPath) {
@@ -37,19 +58,40 @@ export function loadConfig(tomlPath, envPath) {
     throw new Error(`Config file not found: ${tomlPath}`);
   }
   const raw = fs.readFileSync(tomlPath, 'utf8');
+  // Parse first — TOML.parse strips comments, so any ${VAR} inside `#` lines
+  // never reach us. Placeholders remain as literal strings inside string
+  // values until we resolve them below.
+  const cfg = TOML.parse(raw);
 
-  // Only expand placeholders for providers actually referenced by senators.
-  // Strategy: parse twice — first parse raw TOML to find which provider keys
-  // are referenced, then expand only those sections. Simpler: expand the whole
-  // file but make expansion lazy via a try/catch that lists missing vars.
-  // Implementation: expand globally; missing vars throw with a clear message.
-  const expanded = expandEnv(raw);
-  const cfg = TOML.parse(expanded);
-  validate(cfg);
+  validateStructure(cfg);
+
+  // Resolve ${VAR} only in sections we will actually use.
+  if (cfg.senate)               substituteDeep(cfg.senate,               '[senate]');
+  if (cfg.storage)              substituteDeep(cfg.storage,              '[storage]');
+  if (cfg.intensity_overrides)  substituteDeep(cfg.intensity_overrides,  '[intensity_overrides]');
+
+  // Only resolve placeholders for providers referenced by at least one senator.
+  const referenced = new Set(cfg.senator.map((s) => s.provider));
+  for (const name of referenced) {
+    const p = cfg.providers[name];
+    if (!p || typeof p !== 'object' || Object.keys(p).length === 0) {
+      throw new Error(
+        `config: senator references provider "${name}" but [providers.${name}] is empty or undefined. ` +
+          `Uncomment / fill in its keys (kind, base_url, api_key) in senate.toml.`,
+      );
+    }
+    if (!p.kind) {
+      throw new Error(
+        `config: [providers.${name}] is missing required key "kind" (e.g. "azure-direct" | "openai-compat" | "openrouter" | "litellm").`,
+      );
+    }
+    substituteDeep(p, `[providers.${name}]`);
+  }
+
   return cfg;
 }
 
-function validate(cfg) {
+function validateStructure(cfg) {
   if (!cfg.senate) throw new Error('config: missing [senate]');
   const intensity = cfg.senate.intensity;
   if (!['cooperative', 'neutral', 'adversarial'].includes(intensity)) {
@@ -80,3 +122,6 @@ export function resolveSenators(cfg) {
     provider: cfg.providers[s.provider],
   }));
 }
+
+// Re-exported for tests/diagnostics.
+export { substitute as expandEnv };
