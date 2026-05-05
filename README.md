@@ -39,8 +39,8 @@ npx github:jerrywdlee/llm-senate-skill
 This creates the following layout:
 
 ```
+~/.agents/skills/senate/     # SKILL source (user-global)
 <project>/
-  .skills/llm-senate/        # SKILL source
   senate.toml                # Auto-generated (git-safe — uses ${VAR} placeholders only)
   .env.example               # Copy to .env (git-ignored)
   .gitignore                 # .senate/ and .env appended
@@ -69,34 +69,34 @@ cp .env.example .env
 Then in VS Code Chat / Copilot / Codex / Antigravity:
 
 ```text
-/llm-senate <topic to debate>     # Runs the full flow (Steps 1–7)
+/senate <topic to debate>         # Runs the full flow (Steps 1–7)
 # aliases:
-/senate <topic to debate>
 /debate <topic to debate>
+/llm-senate <topic to debate>
 ```
 
-If `/llm-senate` is invoked without content (and without a subcommand like
+If `/senate` is invoked without content (and without a subcommand like
 `critique|converge|milestone|finalize`), the Agent will ask you to provide a
 topic before starting.
 
 You can also call subcommands directly:
 
 ```text
-/llm-senate critique  --session feat-rate-limiter --input ./spec.md
-/llm-senate converge  --session feat-rate-limiter
-/llm-senate milestone --session feat-rate-limiter --title "API contract frozen"
-/llm-senate finalize  --session feat-rate-limiter
+/senate critique  --session feat-rate-limiter --input ./spec.md
+/senate converge  --session feat-rate-limiter
+/senate milestone --session feat-rate-limiter --title "API contract frozen"
+/senate finalize  --session feat-rate-limiter
 ```
 
-> When the Agent receives `/llm-senate critique`, it internally runs
-> `node .skills/llm-senate/scripts/senate.js critique ...`.
+> When the Agent receives `/senate critique`, it internally runs
+> `node ~/.agents/skills/senate/scripts/senate.js critique ...`.
 > You can also run `node ...` directly from the shell, but using the Agent is
 > recommended because it also serves as the Chair (interpreting
 > synthesis-prompt.md and revising current.md).
 
 ### Standard Flow
 
-Running `/llm-senate` triggers the following steps:
+Running `/senate` triggers the following steps:
 
 1. **CRITIQUE** — Senators critique in parallel → `synthesis-prompt.md` generated
 2. **CHAIR SYNTHESIS** — The Agent reads synthesis-prompt.md, adds its own

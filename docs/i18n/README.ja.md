@@ -37,8 +37,8 @@ npx github:jerrywdlee/llm-senate-skill
 これで以下が配置される:
 
 ```
+~/.agents/skills/senate/     # SKILL 本体（ユーザーグローバル）
 <project>/
-  .skills/llm-senate/        # SKILL 本体
   senate.toml                # 自動生成（git 管理 OK、${VAR} プレースホルダのみ）
   .env.example               # コピーして .env を作る（git 管理外）
   .gitignore                 # .senate/ と .env を追記
@@ -66,34 +66,34 @@ cp .env.example .env
 そして VS Code Chat / Copilot / Codex / Antigravity 等で:
 
 ```text
-/llm-senate <討論する内容>        # 標準フロー全体（Step 1〜7）を実行
+/senate <討論する内容>            # 標準フロー全体（Step 1〜7）を実行
 # alias:
-/senate <討論する内容>
 /debate <討論する内容>
+/llm-senate <討論する内容>
 ```
 
-`/llm-senate` を単独で実行した場合（かつ `critique|converge|milestone|finalize` の
+`/senate` を単独で実行した場合（かつ `critique|converge|milestone|finalize` の
 サブコマンドでない場合）は、Agent は討論を開始せず、まず
 「討論する内容を入力してください」と再質問します。
 
 サブコマンドを直接呼ぶことも可能:
 
 ```text
-/llm-senate critique  --session feat-rate-limiter --input ./spec.md
-/llm-senate converge  --session feat-rate-limiter
-/llm-senate milestone --session feat-rate-limiter --title "API contract frozen"
-/llm-senate finalize  --session feat-rate-limiter
+/senate critique  --session feat-rate-limiter --input ./spec.md
+/senate converge  --session feat-rate-limiter
+/senate milestone --session feat-rate-limiter --title "API contract frozen"
+/senate finalize  --session feat-rate-limiter
 ```
 
-> Agent は `/llm-senate critique` を受けると、内部的に
-> `node .skills/llm-senate/scripts/senate.js critique ...` を実行します。
+> Agent は `/senate critique` を受けると、内部的に
+> `node ~/.agents/skills/senate/scripts/senate.js critique ...` を実行します。
 > シェルから直接 `node ...` を叩くことも可能ですが、Agent 経由のほうが
 > Chair 役（synthesis-prompt.md の解釈と current.md の改訂）を兼ねられるため
 > 推奨です。
 
 ### Standard Flow
 
-`/llm-senate` を実行すると Agent は次の手順を踏みます:
+`/senate` を実行すると Agent は次の手順を踏みます:
 
 1. **CRITIQUE** — Senators が並列に critique → `synthesis-prompt.md` 生成
 2. **CHAIR SYNTHESIS** — Agent 自身が synthesis-prompt.md を読み、自身の批判 +

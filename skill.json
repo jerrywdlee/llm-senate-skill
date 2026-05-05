@@ -1,6 +1,6 @@
 {
   "$schema": "https://skills.dev/schema/skill.json",
-  "name": "llm-senate",
+  "name": "senate",
   "id": "llm-senate",
   "version": "0.1.0",
   "summary": "異質な複数 LLM (Senator) に並列討論させ、SKILL を実行する Agent 自身が Chair (司会) として批判・統合・反論しながら段階的に合意形成するハイブリッド SKILL。",
@@ -8,12 +8,12 @@
   "license": "Apache-2.0",
   "author": "jerrywdlee",
   "entry": "SKILL.md",
-  "triggers": ["/llm-senate", "/senate", "/debate"],
+  "triggers": ["/senate", "/debate", "/llm-senate"],
   "subcommands": {
-    "/llm-senate critique":  "Phase 1: Senators が並列に critique → .senate/<session>/synthesis-prompt.md を生成。--input <file> または --topic <text> 必須。",
-    "/llm-senate converge":  "Phase 2: Chair が改訂した .senate/<session>/current.md を Senators が収束チェック (Early Agreement Verification 込み)。",
-    "/llm-senate milestone": "現在の current.md を milestone_<n>.md として凍結。--rollback N でロールバック可。",
-    "/llm-senate finalize":  "conclusion.md と current.md を統合した output.md を生成。"
+    "/senate critique":  "Phase 1: Senators が並列に critique → .senate/<session>/synthesis-prompt.md を生成。--input <file> または --topic <text> 必須。",
+    "/senate converge":  "Phase 2: Chair が改訂した .senate/<session>/current.md を Senators が収束チェック (Early Agreement Verification 込み)。",
+    "/senate milestone": "現在の current.md を milestone_<n>.md として凍結。--rollback N でロールバック可。",
+    "/senate finalize":  "conclusion.md と current.md を統合した output.md を生成。"
   },
   "files": [
     "SKILL.md",
@@ -24,8 +24,8 @@
   "install": {
     "type": "node",
     "bin": "bin/install.js",
-    "destination": ".skills/llm-senate",
-    "post_install_message": "Installed to .skills/llm-senate. Type /llm-senate (or /senate, /debate) in your AI agent to start a session."
+    "destination": "~/.agents/skills/senate",
+    "post_install_message": "Installed to ~/.agents/skills/senate. Type /senate (or /debate, /llm-senate) in your AI agent to start a session."
   },
   "tags": [
     "multi-agent",
