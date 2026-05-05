@@ -148,3 +148,6 @@ vite.config.ts.timestamp-*
 .senate/
 # senate.toml is git-tracked on purpose: it references secrets via ${ENV}
 # placeholders only, so committing it is safe and recommended.
+/.harness_insights/
+/.agents/
+skills-lock.json

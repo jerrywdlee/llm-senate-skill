@@ -160,6 +160,32 @@ node .agents/skills/senate/scripts/senate.js finalize --session <NAME>
 
 `.senate/<session>/output.md` に「確定マイルストーン + 最終 current.md」が出力される。
 
+#### 討論結果サマリ表（必須）
+
+`output.md` を生成した後、**最終結論をユーザーに提示する前に**、以下の形式で
+討論結果のサマリ表を出力すること。この表は省略禁止。
+
+```markdown
+## 🏛 Senate 討論結果サマリ
+
+| 項目 | 内容 |
+|---|---|
+| セッション | `<session name>` |
+| ラウンド数 | <N> |
+| 参加 Senator | <name1> (<role>), <name2> (<role>), … |
+| 最終ステータス | 全員合意 / Chair 判断で打ち切り |
+
+### 論点別結果
+
+| # | 論点 | 結論 | 賛成 | 反対 | 備考 |
+|---|---|---|---|---|---|
+| 1 | <milestone title> | <1行要約> | <賛成 Senator 名> | <反対 Senator 名> | <特記事項> |
+| 2 | … | … | … | … | … |
+```
+
+`anonymize_senators = true` の場合、Senator 名の代わりに匿名ラベル (A/B/C…) を使用する。
+表の出力後に、最終結論（`output.md` の内容）をユーザーに提示する。
+
 ---
 
 ## 3. Configuration の要点
