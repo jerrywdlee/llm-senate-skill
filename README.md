@@ -44,34 +44,52 @@ npx github:jerrywdlee/llm-senate-skill
 
 ## Quick Start
 
-```pwsh
-# 1) シークレット設定
-Copy-Item .env.example .env
+インストール後は **AI Agent のチャット欄でスラッシュコマンドを打つだけ** で
+動きます（Agent が `SKILL.md` を読み、内部で `node` スクリプトを呼びます）。
+
+```text
+# 1) シークレットを設定
+Copy-Item .env.example .env       # PowerShell
 # .env を編集して各プロバイダの base_url / API キーを書く
 
-# 2) senate.toml で senators を定義
-#    [providers.*] と [[senator]] を編集
-
-# 3) Phase 1: 並列 critique → 司会用 synthesis-prompt.md 生成
-node .skills/llm-senate/scripts/senate.js critique `
-  --session feat-rate-limiter `
-  --input .\spec.md
-
-# 4) Chair（＝この Agent 自身）が
-#      data/feat-rate-limiter/synthesis-prompt.md を読み、
-#      data/feat-rate-limiter/current.md に改訂版を書く
-
-# 5) Phase 2: 改訂版の収束チェック（早期合意は追撃検証）
-node .skills/llm-senate/scripts/senate.js converge --session feat-rate-limiter
-
-# 6) 全員 AGREED → milestone 凍結
-node .skills/llm-senate/scripts/senate.js milestone `
-  --session feat-rate-limiter `
-  --title "Rate limiter API contract frozen"
-
-# 7) 仕上げ
-node .skills/llm-senate/scripts/senate.js finalize --session feat-rate-limiter
+# 2) senate.toml で senators を定義（[providers.*] と [[senator]]）
 ```
+
+そして VS Code Chat / Copilot / Codex / Antigravity 等で:
+
+```text
+/llm-senate                       # 標準フロー全体（Step 1〜7）を実行
+# alias:
+/senate
+/debate
+```
+
+サブコマンドを直接呼ぶことも可能:
+
+```text
+/llm-senate critique  --session feat-rate-limiter --input ./spec.md
+/llm-senate converge  --session feat-rate-limiter
+/llm-senate milestone --session feat-rate-limiter --title "API contract frozen"
+/llm-senate finalize  --session feat-rate-limiter
+```
+
+> Agent は `/llm-senate critique` を受けると、内部的に
+> `node .skills/llm-senate/scripts/senate.js critique ...` を実行します。
+> シェルから直接 `node ...` を叩くことも可能ですが、Agent 経由のほうが
+> Chair 役（synthesis-prompt.md の解釈と current.md の改訂）を兼ねられるため
+> 推奨です。
+
+### Standard Flow
+
+`/llm-senate` を実行すると Agent は次の手順を踏みます:
+
+1. **CRITIQUE** — Senators が並列に critique → `synthesis-prompt.md` 生成
+2. **CHAIR SYNTHESIS** — Agent 自身が synthesis-prompt.md を読み、自身の批判 +
+   採否判断を行い `current.md` に改訂版を書く
+3. **CONVERGE** — Senators が改訂版を収束チェック（Early Agreement Verification 込み）
+4. **MILESTONE** — 全員 AGREED なら凍結
+5. **LOOP / FINALIZE** — 残論点があれば 1 に戻り、完了したら `output.md` を生成
+
 
 ## Configuration Sketch
 

@@ -11,7 +11,7 @@
 
 [senate]
 # 既定の対抗強度: cooperative | neutral | adversarial
-intensity        = "adversarial"
+intensity        = "neutral"
 # Preserve Intent: 削除提案に「具体的害の証明」を強制
 preserve_intent  = true
 # 1セッション内で許す最大ラウンド数（Agentが追跡用に使用）
