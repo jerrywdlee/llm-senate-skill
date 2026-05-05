@@ -14,6 +14,8 @@
 intensity        = "neutral"
 # Preserve Intent: 削除提案に「具体的害の証明」を強制
 preserve_intent  = true
+# Senator 名を匿名ラベル (A/B/C…) に置換して Chair に渡す (贔屓排除)
+anonymize_senators = false
 # 1セッション内で許す最大ラウンド数（Agentが追跡用に使用）
 max_rounds       = 3
 # Early Agreement Verification を発動するラウンド閾値

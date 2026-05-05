@@ -112,7 +112,7 @@ node .skills/llm-senate/scripts/senate.js critique `
 Agent は `.senate/<session>/synthesis-prompt.md` を **必ず読み**、その指示に従って:
 
 1. 自身の独自 critique を述べる（Senators が見落とした点を追加で出す）
-2. 各 Senator 批判を **匿名ラベル A/B/C で参照しながら** 採否を明示
+2. 各 Senator 批判の採否を明示（`anonymize_senators = true` なら匿名ラベル A/B/C で参照）
    - ACCEPTED: 改訂版に反映する根拠を述べる
    - REJECTED: off-target / harms intent / factually wrong のいずれかを明示
 3. 改訂版を `.senate/<session>/current.md` に **書き込む**
@@ -175,6 +175,7 @@ node .skills/llm-senate/scripts/senate.js finalize --session <NAME>
 |---|---|---|
 | `senate.intensity` | `cooperative` \| `neutral` \| `adversarial` | critique の対抗強度を制御 |
 | `senate.preserve_intent` | bool | 削除提案に verbatim 引用 + 害証明を強制 |
+| `senate.anonymize_senators` | bool | Senator 名を A/B/C… に匿名化 (既定 `false`) |
 | `senate.max_rounds` | int | 1セッション内の最大ラウンド数 |
 | `senate.early_agreement_round_threshold` | int | EAV（早期合意検証）発動閾値 |
 | `providers.<name>.kind` | `azure-direct` \| `openai-compat` \| `openrouter` | API 接続方式 |

@@ -87,7 +87,7 @@ model = "gpt-5.2"
    - Senators へ並列に critique を送信（`Promise.all` × 強度モード × 役割）
    - 各レスポンスから `<scratchpad>` を抽出 → `memory_<senator>.md` に上書き、本文を
      `transcript.md` に追記
-   - `synthesis-prompt.md` を生成（匿名化ラベル A/B/C…付き、Chair 向け）
+   - `synthesis-prompt.md` を生成（`anonymize_senators = true` なら匿名化ラベル A/B/C…付き、Chair 向け）
 2. **Chair 自身が `synthesis-prompt.md` を読み**、独自批判 + 採否判断 + 反論を行い、
    改訂版を `.senate/<session>/current.md` に書き込む（**Chair = 呼び出し元 Agent**）
 3. **`senate.js converge`** （Phase 2）

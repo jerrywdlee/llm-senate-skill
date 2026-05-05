@@ -193,6 +193,7 @@ async function cmdCritique(args) {
   const premises = establishedPremisesBlock(sessDir);
   const intensity = cfg.senate.intensity;
   const preserveIntent = !!cfg.senate.preserve_intent;
+  const anonymize = !!cfg.senate.anonymize_senators;
   const pairs = resolveSenators(cfg);
 
   console.log(`\n=== critique (round ${round}, intensity=${intensity}) ===`);
@@ -236,9 +237,9 @@ async function cmdCritique(args) {
 
   // Emit synthesis prompt for the Chair (the calling agent)
   const labels = critiques.map((_, i) => String.fromCharCode(65 + i));
-  const anonymized = critiques
-    .map((c, i) => `### Senator ${labels[i]} (anonymized)\n${c.text}`)
-    .join('\n\n---\n\n');
+  const critiqueSection = anonymize
+    ? critiques.map((c, i) => `### Senator ${labels[i]} (anonymized)\n${c.text}`).join('\n\n---\n\n')
+    : critiques.map((c) => `### ${c.senator}\n${c.text}`).join('\n\n---\n\n');
 
   const synthesisPrompt = [
     `# Chair Synthesis Brief — round ${round}`,
@@ -248,13 +249,19 @@ async function cmdCritique(args) {
     '',
     'Inputs below:',
     '- The current proposal',
-    `- ${critiques.length} critiques from senators (anonymized as ${labels.join(', ')} to prevent favoritism)`,
+    anonymize
+      ? `- ${critiques.length} critiques from senators (anonymized as ${labels.join(', ')} to prevent favoritism)`
+      : `- ${critiques.length} critiques from senators`,
     '',
     premises ? premises + '\n' : '',
     '## Your Tasks',
     '1. Provide your OWN independent critique first — what did the senators miss?',
-    '2. Adjudicate each anonymized critique:',
-    '   - ACCEPTED: integrate into revision (cite the label)',
+    anonymize
+      ? '2. Adjudicate each anonymized critique:'
+      : '2. Adjudicate each critique:',
+    anonymize
+      ? '   - ACCEPTED: integrate into revision (cite the label)'
+      : '   - ACCEPTED: integrate into revision (cite the senator name)',
     '   - REJECTED: state explicit reason (off-target / harms intent / factually wrong)',
     `3. Produce the next revision (version ${round + 1}) of the proposal and write it to`,
     '   `data/<session>/current.md`.',
@@ -268,11 +275,15 @@ async function cmdCritique(args) {
     proposal,
     '```',
     '',
-    '## Anonymized Senator Critiques',
-    anonymized,
+    anonymize ? '## Anonymized Senator Critiques' : '## Senator Critiques',
+    critiqueSection,
     '',
-    '## Mapping (private; do NOT use to play favorites)',
-    pairs.map((p, i) => `- Senator ${labels[i]} = "${p.senator.name}" (${p.senator.role || 'no role'})`).join('\n'),
+    ...(anonymize
+      ? [
+          '## Mapping (private; do NOT use to play favorites)',
+          pairs.map((p, i) => `- Senator ${labels[i]} = "${p.senator.name}" (${p.senator.role || 'no role'})`).join('\n'),
+        ]
+      : []),
     '',
     '## After You Write the Revision',
     'Run:',
