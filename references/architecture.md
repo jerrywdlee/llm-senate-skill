@@ -67,7 +67,7 @@ model = "gpt-5.2"
 ## Session Layout
 
 ```
-data/<session>/
+.senate/<session>/
   config.snapshot.toml   # 1回目の critique 時にスナップショット
   round.txt              # ラウンドカウンタ
   current.md             # 現在の最新提案 (Chair が converge 前に更新)
@@ -89,7 +89,7 @@ data/<session>/
      `transcript.md` に追記
    - `synthesis-prompt.md` を生成（匿名化ラベル A/B/C…付き、Chair 向け）
 2. **Chair 自身が `synthesis-prompt.md` を読み**、独自批判 + 採否判断 + 反論を行い、
-   改訂版を `data/<session>/current.md` に書き込む（**Chair = 呼び出し元 Agent**）
+   改訂版を `.senate/<session>/current.md` に書き込む（**Chair = 呼び出し元 Agent**）
 3. **`senate.js converge`** （Phase 2）
    - Senators へ改訂版と各自の前回 critique を渡し、`STATUS: AGREED|OBJECTING` と
      残課題を返させる

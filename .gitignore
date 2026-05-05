@@ -145,6 +145,6 @@ vite.config.ts.timestamp-*
 .tmp/
 
 # llm-senate session data (transcripts, memories, milestones)
-data/
+.senate/
 # senate.toml is git-tracked on purpose: it references secrets via ${ENV}
 # placeholders only, so committing it is safe and recommended.

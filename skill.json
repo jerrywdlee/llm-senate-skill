@@ -10,8 +10,8 @@
   "entry": "SKILL.md",
   "triggers": ["/llm-senate", "/senate", "/debate"],
   "subcommands": {
-    "/llm-senate critique":  "Phase 1: Senators が並列に critique → data/<session>/synthesis-prompt.md を生成。--input <file> または --topic <text> 必須。",
-    "/llm-senate converge":  "Phase 2: Chair が改訂した data/<session>/current.md を Senators が収束チェック (Early Agreement Verification 込み)。",
+    "/llm-senate critique":  "Phase 1: Senators が並列に critique → .senate/<session>/synthesis-prompt.md を生成。--input <file> または --topic <text> 必須。",
+    "/llm-senate converge":  "Phase 2: Chair が改訂した .senate/<session>/current.md を Senators が収束チェック (Early Agreement Verification 込み)。",
     "/llm-senate milestone": "現在の current.md を milestone_<n>.md として凍結。--rollback N でロールバック可。",
     "/llm-senate finalize":  "conclusion.md と current.md を統合した output.md を生成。"
   },

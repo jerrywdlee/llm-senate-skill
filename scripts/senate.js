@@ -165,7 +165,7 @@ async function cmdCritique(args) {
   if (args.intensity) cfg.senate.intensity = args.intensity;
 
   const sess = args.session || 'default';
-  const dataDir = cfg.storage?.data_dir || './data';
+  const dataDir = cfg.storage?.data_dir || './.senate';
   const sessDir = sessionDir(dataDir, sess);
 
   // Snapshot config on first round
@@ -296,7 +296,7 @@ async function cmdConverge(args) {
   if (args.intensity) cfg.senate.intensity = args.intensity;
 
   const sess = args.session || 'default';
-  const dataDir = cfg.storage?.data_dir || './data';
+  const dataDir = cfg.storage?.data_dir || './.senate';
   const sessDir = sessionDir(dataDir, sess);
   const round = readRoundCounter(sessDir);
 
@@ -414,7 +414,7 @@ async function cmdConverge(args) {
 async function cmdMilestone(args) {
   const cfg = loadConfig(args.config || 'senate.toml', args.env);
   const sess = args.session || 'default';
-  const dataDir = cfg.storage?.data_dir || './data';
+  const dataDir = cfg.storage?.data_dir || './.senate';
   const sessDir = sessionDir(dataDir, sess);
 
   if (args.rollback) {
@@ -439,7 +439,7 @@ async function cmdMilestone(args) {
 async function cmdFinalize(args) {
   const cfg = loadConfig(args.config || 'senate.toml', args.env);
   const sess = args.session || 'default';
-  const dataDir = cfg.storage?.data_dir || './data';
+  const dataDir = cfg.storage?.data_dir || './.senate';
   const sessDir = sessionDir(dataDir, sess);
   const out = path.join(sessDir, 'output.md');
 

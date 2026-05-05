@@ -1,7 +1,7 @@
 # Dev / repo-only files — exclude from the published npm package
 .git/
 .tmp/
-data/
+.senate/
 node_modules/
 *.log
 .env

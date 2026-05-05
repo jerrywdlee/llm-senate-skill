@@ -39,7 +39,7 @@ npx github:jerrywdlee/llm-senate-skill
   .skills/llm-senate/        # SKILL 本体
   senate.toml                # 自動生成（git 管理 OK、${VAR} プレースホルダのみ）
   .env.example               # コピーして .env を作る（git 管理外）
-  .gitignore                 # data/ と .env を追記
+  .gitignore                 # .senate/ と .env を追記
 ```
 
 > `senate.toml` はインストール時に `assets/senate.toml.example` から自動コピーされます。

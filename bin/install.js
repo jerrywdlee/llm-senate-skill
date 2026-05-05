@@ -11,10 +11,10 @@
 //   - Resolves PACKAGE_DIR (where the skill source lives) via __dirname/..
 //   - Resolves PROJECT_DIR (where to install) from --dest, env SKILL_INSTALL_DIR,
 //     or process.cwd().
-//   - Copies SKILL files into <PROJECT_DIR>/.skills/llm-senate/  (skips bin/, .git, node_modules, .tmp, data)
+//   - Copies SKILL files into <PROJECT_DIR>/.skills/llm-senate/  (skips bin/, .git, node_modules, .tmp, .senate)
 //   - Drops senate.toml.example -> <PROJECT_DIR>/senate.toml (if missing)
 //   - Drops .env.example -> <PROJECT_DIR>/.env (if missing)
-//   - Ensures <PROJECT_DIR>/.gitignore contains `.env` and `data/`
+//   - Ensures <PROJECT_DIR>/.gitignore contains `.env` and `.senate/`
 //   - Prints next-step instructions
 //
 // Re-run safe (idempotent). Pass --force to overwrite existing files.
@@ -37,7 +37,7 @@ const projectDir = path.resolve(
 const SKILL_NAME = 'llm-senate';
 const installDir = path.join(projectDir, '.skills', SKILL_NAME);
 
-const SKIP = new Set(['node_modules', '.git', '.tmp', 'data', 'bin']);
+const SKIP = new Set(['node_modules', '.git', '.tmp', '.senate', 'bin']);
 const COPY_TOP = ['SKILL.md', 'skill.json', 'README.md', 'LICENSE', 'scripts', 'references', 'assets'];
 
 function parseArgs(argv) {
@@ -156,11 +156,11 @@ async function main() {
   copyTemplate('assets/senate.toml.example', 'senate.toml', 'senate.toml');
   copyTemplate('assets/.env.example', '.env', '.env');
 
-  const dataDir = path.join(projectDir, 'data');
-  if (!fs.existsSync(dataDir)) { fs.mkdirSync(dataDir, { recursive: true }); log(`[wrote] data/`); }
+  const dataDir = path.join(projectDir, '.senate');
+  if (!fs.existsSync(dataDir)) { fs.mkdirSync(dataDir, { recursive: true }); log(`[wrote] .senate/`); }
 
   ensureGitignore('.env');
-  ensureGitignore('data/');
+  ensureGitignore('.senate/');
 
   log('');
   log('Done. Next steps:');
