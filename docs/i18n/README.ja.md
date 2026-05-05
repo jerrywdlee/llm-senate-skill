@@ -37,7 +37,7 @@ npx github:jerrywdlee/llm-senate-skill
 これで以下が配置される:
 
 ```
-~/.agents/skills/senate/     # SKILL 本体（ユーザーグローバル）
+.agents/skills/senate/       # SKILL 本体
 <project>/
   senate.toml                # 自動生成（git 管理 OK、${VAR} プレースホルダのみ）
   .env.example               # コピーして .env を作る（git 管理外）
@@ -86,7 +86,7 @@ cp .env.example .env
 ```
 
 > Agent は `/senate critique` を受けると、内部的に
-> `node ~/.agents/skills/senate/scripts/senate.js critique ...` を実行します。
+> `node .agents/skills/senate/scripts/senate.js critique ...` を実行します。
 > シェルから直接 `node ...` を叩くことも可能ですが、Agent 経由のほうが
 > Chair 役（synthesis-prompt.md の解釈と current.md の改訂）を兼ねられるため
 > 推奨です。

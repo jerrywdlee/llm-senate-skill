@@ -288,7 +288,7 @@ async function cmdCritique(args) {
     '## After You Write the Revision',
     'Run:',
     '```pwsh',
-    `node ~/.agents/skills/senate/scripts/senate.js converge --session ${sess}`,
+    `node .agents/skills/senate/scripts/senate.js converge --session ${sess}`,
     '```',
   ].filter(Boolean).join('\n');
 

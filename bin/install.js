@@ -3,7 +3,7 @@
 //
 // This script is invoked in two ways:
 //   1. `npx llm-senate` (or `npx github:jerrywdlee/llm-senate-skill`)
-//      → runs from the npm cache; copies skill into ~/.agents/skills/senate/
+//      → runs from the npm cache; copies skill into <project>/.agents/skills/senate/
 //   2. `npx skills add jerrywdlee/llm-senate-skill`
 //      → the external `skills` CLI clones the repo and invokes this file
 //
@@ -11,7 +11,7 @@
 //   - Resolves PACKAGE_DIR (where the skill source lives) via __dirname/..
 //   - Resolves PROJECT_DIR (where to install config files) from --dest,
 //     env SKILL_INSTALL_DIR, or process.cwd().
-//   - Copies SKILL files into ~/.agents/skills/senate/  (skips bin/, .git, node_modules, .tmp, .senate)
+//   - Copies SKILL files into <PROJECT_DIR>/.agents/skills/senate/  (skips bin/, .git, node_modules, .tmp, .senate)
 //   - Drops senate.toml.example -> <PROJECT_DIR>/senate.toml (if missing)
 //   - Drops .env.example -> <PROJECT_DIR>/.env (if missing)
 //   - Ensures <PROJECT_DIR>/.gitignore contains `.env` and `.senate/`
@@ -21,7 +21,6 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import os from 'node:os';
 import url from 'node:url';
 import { spawnSync } from 'node:child_process';
 
@@ -36,7 +35,7 @@ const projectDir = path.resolve(
   args.get('dest') || process.env.SKILL_INSTALL_DIR || process.cwd()
 );
 const SKILL_NAME = 'senate';
-const installDir = path.join(os.homedir(), '.agents', 'skills', SKILL_NAME);
+const installDir = path.join(projectDir, '.agents', 'skills', SKILL_NAME);
 
 const SKIP = new Set(['node_modules', '.git', '.tmp', '.senate', 'bin']);
 const COPY_TOP = ['SKILL.md', 'skill.json', 'README.md', 'LICENSE', 'scripts', 'references', 'assets'];
@@ -151,7 +150,7 @@ async function main() {
   log('');
 
   copySkillFiles();
-  // Bring in node_modules so `node ~/.agents/skills/senate/scripts/senate.js` works without a second step.
+  // Bring in node_modules so `node .agents/skills/senate/scripts/senate.js` works without a second step.
   installDepsIfMissing();
 
   copyTemplate('assets/senate.toml.example', 'senate.toml', 'senate.toml');
@@ -166,7 +165,7 @@ async function main() {
   log('');
   log('Done. Next steps:');
   log('  1. Edit senate.toml and .env at the project root.');
-  log(`  2. Open this project in VS Code; Copilot will discover SKILL.md under ~/.agents/skills/senate/.`);
+  log(`  2. Open this project in VS Code; Copilot will discover SKILL.md under .agents/skills/senate/.`);
   log('  3. Type /senate in your AI agent chat to start a debate.');
 }
 

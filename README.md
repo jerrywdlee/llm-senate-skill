@@ -39,7 +39,7 @@ npx github:jerrywdlee/llm-senate-skill
 This creates the following layout:
 
 ```
-~/.agents/skills/senate/     # SKILL source (user-global)
+.agents/skills/senate/       # SKILL source
 <project>/
   senate.toml                # Auto-generated (git-safe — uses ${VAR} placeholders only)
   .env.example               # Copy to .env (git-ignored)
@@ -89,7 +89,7 @@ You can also call subcommands directly:
 ```
 
 > When the Agent receives `/senate critique`, it internally runs
-> `node ~/.agents/skills/senate/scripts/senate.js critique ...`.
+> `node .agents/skills/senate/scripts/senate.js critique ...`.
 > You can also run `node ...` directly from the shell, but using the Agent is
 > recommended because it also serves as the Chair (interpreting
 > synthesis-prompt.md and revising current.md).
