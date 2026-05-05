@@ -166,6 +166,9 @@ node .skills/llm-senate/scripts/senate.js finalize --session <NAME>
 `senate.toml`（プロジェクトルート、git 管理対象）と `.env`（`.gitignore` 済み）で構成。
 完全な設定例は `assets/senate.toml.example` を参照。
 
+> **❗ 使わない provider セクションはコメントアウトすること。**
+> `.env` に定義されていない環境変数を `${VAR}` で参照するとランタイムエラーになる。
+
 ### キーパラメータ
 
 | キー | 型 | 影響 |
@@ -177,8 +180,22 @@ node .skills/llm-senate/scripts/senate.js finalize --session <NAME>
 | `providers.<name>.kind` | `azure-direct` \| `openai-compat` \| `openrouter` | API 接続方式 |
 | `providers.<name>.base_url` | string (`${ENV_VAR}`) | エンドポイント URL |
 | `providers.<name>.api_key` | string (`${ENV_VAR}`) | API キー |
+| `providers.<name>.api_version` | string (`${ENV_VAR}`, 任意) | Azure API バージョン |
 | `[[senator]].provider` | string | 使用する `[providers.<name>]` を参照 |
-| `[[senator]].role` | string | `assets/prompts/role_*.md` に対応 |
+| `[[senator]].role` | string (任意) | Senator の视点。下表参照 |
+
+### Senator Role
+
+`role` は `assets/prompts/role_<role>.md` をシステムプロンプトに注入し、
+Senator の視点を制御する。省略すると汎用レビュアーとして動作する。
+
+| role | 视点 |
+|---|---|
+| `architect` | 論理的整合性・スケーラビリティ・エッジケース・契約明確性 |
+| `security` | 脆弱性 (OWASP)・プライバシー・UX・信頼境界 |
+| `innovator` | 前提疑い・新規角度・極端条件テスト |
+| `pm` | ユーザー価値・スコープ・成功指標 |
+| `sre` | 運用性・障害影響・ロールバック・可観測性 |
 
 ### 最小構成サンプル（構造理解用）
 

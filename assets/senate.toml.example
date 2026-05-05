@@ -26,6 +26,9 @@ early_agreement_round_threshold = 2
 # 同じ provider を複数の senator で再利用できます。
 # それぞれ完全に独立したエンドポイントを設定できるので、Azure / Google /
 # OpenRouter / ローカル Ollama / vLLM などを自由に混在させられます。
+#
+# ❗ 使わない provider はセクションごとコメントアウトしてください。
+#    存在しない環境変数を ${VAR} で参照するとランタイムエラーになります。
 # ====================================================================
 
 [providers.azure]
@@ -69,7 +72,15 @@ api_key  = "${LOCAL_LLM_API_KEY}"    # 例: ollama (任意の文字列)
 # 任意の数だけ [[senator]] を追加できます。
 # - provider: 上の [providers.<name>] を参照
 # - model:    そのプロバイダで使用するモデル ID
-# - role:     references/prompts.md / assets/prompts/role_*.md
+# - role:     Senator の視点を決めるロール。assets/prompts/role_<role>.md が
+#             システムプロンプトに注入されます。
+#             利用可能な値:
+#               architect  — システム設計・スケーラビリティ・契約明確性
+#               security   — 脆弱性・UX・プライバシー・信頼境界
+#               innovator  — 前提疑い・新規角度・極端条件テスト
+#               pm         — ユーザー価値・スコープ・成功指標
+#               sre        — 運用性・障害影響・ロールバック・可観測性
+#             省略すると汎用レビュアーとして動作します。
 # - temperature / max_tokens は任意 (省略可)
 # ====================================================================
 

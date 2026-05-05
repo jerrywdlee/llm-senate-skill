@@ -37,10 +37,13 @@ npx github:jerrywdlee/llm-senate-skill
 ```
 <project>/
   .skills/llm-senate/        # SKILL 本体
-  senate.toml                # git 管理 OK（${VAR} プレースホルダのみ）
+  senate.toml                # 自動生成（git 管理 OK、${VAR} プレースホルダのみ）
   .env.example               # コピーして .env を作る（git 管理外）
   .gitignore                 # data/ と .env を追記
 ```
+
+> `senate.toml` はインストール時に `assets/senate.toml.example` から自動コピーされます。
+> 既に存在する場合は上書きされません。再生成するには `--force` を付けてください。
 
 ## Quick Start
 
@@ -52,7 +55,10 @@ npx github:jerrywdlee/llm-senate-skill
 Copy-Item .env.example .env       # PowerShell
 # .env を編集して各プロバイダの base_url / API キーを書く
 
-# 2) senate.toml で senators を定義（[providers.*] と [[senator]]）
+# 2) senate.toml を編集
+#    - 使う [providers.*] と [[senator]] だけ残す
+#    - 使わない provider セクションはコメントアウトすること
+#      （存在しない環境変数を ${VAR} で参照するとエラーになる）
 ```
 
 そして VS Code Chat / Copilot / Codex / Antigravity 等で:
@@ -97,6 +103,10 @@ Copy-Item .env.example .env       # PowerShell
 
 ## Configuration Sketch
 
+> **❗ 使わない provider セクションはコメントアウトしてください。**
+> `.env` に定義されていない環境変数を `${VAR}` で参照するとランタイムエラーになります。
+> 完全な設定例は [`assets/senate.toml.example`](assets/senate.toml.example) を参照。
+
 ```toml
 [senate]
 intensity = "neutral"
@@ -106,37 +116,46 @@ early_agreement_round_threshold = 2
 
 [providers.azure]
 kind = "azure-direct"
-base_url = "${AZURE_OPENAI_ENDPOINT}"
-api_key  = "${AZURE_OPENAI_API_KEY}"
+base_url    = "${AZURE_OPENAI_ENDPOINT}"
+api_key     = "${AZURE_OPENAI_API_KEY}"
+api_version = "${AZURE_OPENAI_API_VERSION}"
 
 [providers.google]
 kind = "openai-compat"
 base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
 api_key  = "${GEMINI_API_KEY}"
 
-[providers.local]
-kind = "openai-compat"
-base_url = "${LOCAL_LLM_BASE_URL}"   # e.g. http://localhost:11434/v1
-api_key  = "${LOCAL_LLM_API_KEY}"
+# 使わない provider はコメントアウト:
+# [providers.local]
+# kind = "openai-compat"
+# base_url = "${LOCAL_LLM_BASE_URL}"
+# api_key  = "${LOCAL_LLM_API_KEY}"
 
 [[senator]]
 name = "azure-gpt"
 provider = "azure"
 model = "gpt-5.2"
-role = "architect"
+role = "architect"       # システム設計・スケーラビリティ视点
 
 [[senator]]
 name = "gemini"
 provider = "google"
 model = "gemini-2.5-pro"
-role = "security"
-
-[[senator]]
-name = "local-gemma"
-provider = "local"
-model = "gemma3:12b"
-role = "sre"
+role = "security"        # 脆弱性・UX・プライバシー视点
 ```
+
+### Senator Role 一覧
+
+`role` は Senator の視点を決めるフィールドで、`assets/prompts/role_<role>.md` が
+システムプロンプトに注入されます。省略すると汎用レビュアーとして動作します。
+
+| role | 视点 |
+|---|---|
+| `architect` | 論理的整合性・スケーラビリティ・エッジケース・契約明確性 |
+| `security` | 脆弱性 (OWASP)・プライバシー・UX・信頼境界 |
+| `innovator` | 前提疑い・新規角度・極端条件テスト |
+| `pm` | ユーザー価値・スコープ・成功指標 |
+| `sre` | 運用性・障害影響・ロールバック・可観測性 |
 
 > Note:
 > Azure 上に Host された Grok は `kind = "azure-direct"` ではなく
