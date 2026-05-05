@@ -1,0 +1,48 @@
+{
+  "name": "llm-senate",
+  "version": "0.1.0",
+  "description": "Multi-LLM senate / debate SKILL — adversarial-spec design philosophy + llm-council Chair model. Drives Azure OpenAI / Grok / Gemini through an OpenAI-compatible gateway. Installable via `npx skills add` or `npx llm-senate`.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/jerrywdlee/llm-senate-skill",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jerrywdlee/llm-senate-skill.git"
+  },
+  "keywords": [
+    "skill",
+    "agent-skill",
+    "copilot",
+    "llm",
+    "multi-agent",
+    "debate",
+    "adversarial-spec",
+    "llm-council"
+  ],
+  "bin": {
+    "llm-senate": "./bin/install.js",
+    "llm-senate-run": "./scripts/senate.js"
+  },
+  "files": [
+    "SKILL.md",
+    "skill.json",
+    "bin/",
+    "scripts/",
+    "references/",
+    "assets/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "install-skill": "node ./bin/install.js",
+    "senate": "node ./scripts/senate.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "dotenv": "^16.4.5",
+    "openai": "^4.77.0"
+  }
+}

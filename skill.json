@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/skills-cli/main/schema/skill.schema.json",
+  "name": "llm-senate",
+  "version": "0.1.0",
+  "description": "Multi-LLM senate / debate skill: parallel critique by Azure OpenAI / Grok / Gemini, synthesis by an active Chair, with adversarial-spec safeguards (Early Agreement Verification, Preserve Intent) and per-agent private memory.",
+  "homepage": "https://github.com/jerrywdlee/llm-senate-skill",
+  "license": "Apache-2.0",
+  "author": "jerrywdlee",
+  "command": "/llm-senate",
+  "aliases": ["/senate", "/debate"],
+  "skill_file": "SKILL.md",
+  "install": {
+    "type": "node",
+    "bin": "bin/install.js",
+    "dest": ".skills/llm-senate"
+  },
+  "files": [
+    "SKILL.md",
+    "scripts/",
+    "references/",
+    "assets/"
+  ],
+  "tags": [
+    "multi-agent",
+    "debate",
+    "adversarial",
+    "spec-review",
+    "consensus"
+  ]
+}

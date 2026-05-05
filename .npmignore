@@ -1,0 +1,14 @@
+# Dev / repo-only files — exclude from the published npm package
+.git/
+.tmp/
+data/
+node_modules/
+*.log
+.env
+senate.toml
+.vscode/
+.idea/
+test/
+tests/
+*.test.js
+.github/

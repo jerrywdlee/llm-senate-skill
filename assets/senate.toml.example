@@ -1,0 +1,116 @@
+# ====================================================================
+# llm-senate configuration  (TOML, GIT-TRACKABLE)
+#
+# This file is safe to commit because every secret is referenced as
+# ${ENV_VAR} and resolved at runtime from the project's .env / process.env.
+# Do NOT inline raw API keys here.
+#
+# Chair (司会) は本SKILLを実行するエージェント (Copilot / Codex / Antigravity 等)
+# 自身が務めます。Chair用のLLM設定は不要です。Senatorのみ定義します。
+# ====================================================================
+
+[senate]
+# 既定の対抗強度: cooperative | neutral | adversarial
+intensity        = "adversarial"
+# Preserve Intent: 削除提案に「具体的害の証明」を強制
+preserve_intent  = true
+# 1セッション内で許す最大ラウンド数（Agentが追跡用に使用）
+max_rounds       = 3
+# Early Agreement Verification を発動するラウンド閾値
+early_agreement_round_threshold = 2
+
+# ====================================================================
+# Providers (named presets)
+# ----
+# 各 [[senator]] は `provider = "<name>"` でここを参照します。
+# 同じ provider を複数の senator で再利用できます。
+# それぞれ完全に独立したエンドポイントを設定できるので、Azure / Google /
+# OpenRouter / ローカル Ollama / vLLM などを自由に混在させられます。
+# ====================================================================
+
+[providers.azure]
+# kind: "azure-direct"   …… Azure OpenAI を直接叩く
+kind        = "azure-direct"
+base_url    = "${AZURE_OPENAI_ENDPOINT}"
+api_key     = "${AZURE_OPENAI_API_KEY}"
+api_version = "2024-10-21"
+
+[providers.google]
+# Google AI Studio の Gemini API を、OpenAI 互換エンドポイント経由で叩く
+# ( https://generativelanguage.googleapis.com/v1beta/openai )
+kind     = "openai-compat"
+base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
+api_key  = "${GEMINI_API_KEY}"
+
+[providers.xai]
+kind     = "openai-compat"
+base_url = "https://api.x.ai/v1"
+api_key  = "${XAI_API_KEY}"
+
+[providers.openrouter]
+# 一括ルーティング (1キーで多モデル)
+kind     = "openrouter"
+base_url = "https://openrouter.ai/api/v1"
+api_key  = "${OPENROUTER_API_KEY}"
+
+[providers.local]
+# ローカル LLM 例: Ollama (gemma2 / llama3 等) や vLLM
+kind     = "openai-compat"
+base_url = "${LOCAL_LLM_BASE_URL}"   # 例: http://localhost:11434/v1
+api_key  = "${LOCAL_LLM_API_KEY}"    # 例: ollama (任意の文字列)
+
+# ====================================================================
+# Senators (討論者)
+# ----
+# 任意の数だけ [[senator]] を追加できます。
+# - provider: 上の [providers.<name>] を参照
+# - model:    そのプロバイダで使用するモデル ID
+# - role:     references/prompts.md / assets/prompts/role_*.md
+# - temperature / max_tokens は任意 (省略可)
+# ====================================================================
+
+[[senator]]
+name        = "azure-gpt"
+provider    = "azure"
+model       = "gpt-5.2"
+role        = "architect"
+temperature = 0.4
+
+[[senator]]
+name        = "grok"
+provider    = "xai"
+model       = "grok-4"
+role        = "innovator"
+temperature = 0.6
+
+[[senator]]
+name        = "gemini"
+provider    = "google"
+model       = "gemini-3-pro"
+role        = "security"
+temperature = 0.4
+
+# ローカル LLM 例 (任意。コメントを外して使用)
+# [[senator]]
+# name        = "local-gemma"
+# provider    = "local"
+# model       = "gemma2:27b"
+# role        = "pm"
+# temperature = 0.5
+
+# ====================================================================
+# Intensity ごとの temperature 上書き (任意)
+# 既定 temperature に加算される
+# ====================================================================
+[intensity_overrides.cooperative]
+temperature_bump = 0.3
+[intensity_overrides.neutral]
+temperature_bump = 0.0
+[intensity_overrides.adversarial]
+temperature_bump = -0.2
+
+# ====================================================================
+# セッション保存先
+# ====================================================================
+[storage]
+data_dir = "./data"
