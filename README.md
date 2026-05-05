@@ -42,7 +42,7 @@ npx github:jerrywdlee/llm-senate-skill
   .gitignore                 # .senate/ と .env を追記
 ```
 
-> `senate.toml` はインストール時に `assets/senate.toml.example` から自動コピーされます。
+> `senate.toml` と `.env` はインストール時にそれぞれ `assets/senate.toml.example`・`assets/.env.example` から自動コピーされます。
 > 既に存在する場合は上書きされません。再生成するには `--force` を付けてください。
 
 ## Quick Start
@@ -50,9 +50,9 @@ npx github:jerrywdlee/llm-senate-skill
 インストール後は **AI Agent のチャット欄でスラッシュコマンドを打つだけ** で
 動きます（Agent が `SKILL.md` を読み、内部で `node` スクリプトを呼びます）。
 
-```text
+```bash
 # 1) シークレットを設定
-Copy-Item .env.example .env       # PowerShell
+cp .env.example .env
 # .env を編集して各プロバイダの base_url / API キーを書く
 
 # 2) senate.toml を編集
