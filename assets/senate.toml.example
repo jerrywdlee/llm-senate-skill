@@ -35,7 +35,7 @@ early_agreement_round_threshold = 2
 kind        = "azure-direct"
 base_url    = "${AZURE_OPENAI_ENDPOINT}"
 api_key     = "${AZURE_OPENAI_API_KEY}"
-api_version = "2024-10-21"
+api_version = "${AZURE_OPENAI_API_VERSION}"
 
 [providers.google]
 # Google AI Studio の Gemini API を、OpenAI 互換エンドポイント経由で叩く

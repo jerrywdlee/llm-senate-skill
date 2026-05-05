@@ -58,11 +58,15 @@ Copy-Item .env.example .env       # PowerShell
 そして VS Code Chat / Copilot / Codex / Antigravity 等で:
 
 ```text
-/llm-senate                       # 標準フロー全体（Step 1〜7）を実行
+/llm-senate <討論する内容>        # 標準フロー全体（Step 1〜7）を実行
 # alias:
-/senate
-/debate
+/senate <討論する内容>
+/debate <討論する内容>
 ```
+
+`/llm-senate` を単独で実行した場合（かつ `critique|converge|milestone|finalize` の
+サブコマンドでない場合）は、Agent は討論を開始せず、まず
+「討論する内容を入力してください」と再質問します。
 
 サブコマンドを直接呼ぶことも可能:
 
